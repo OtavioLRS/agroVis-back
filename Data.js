@@ -123,3 +123,7 @@ function structureHorizonData(data) {
 const d3 = require('d3');
 
 const parseDate = d3.timeParse('%m/%Y');
+
+function teste() {
+  console.log('sim')
+}
