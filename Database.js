@@ -1,5 +1,4 @@
 const mysql = require('mysql');
-const { structureExportData } = require('./Data');
 
 const connection = mysql.createPool({
   host: 'localhost',
