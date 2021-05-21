@@ -1,14 +1,13 @@
 const mysql = require('mysql');
 
 const connection = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'root',
-  database: 'tcc-db'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME
 })
 
-// const table = 'exportacao_sh4';
-const table = 'exportacao_teste';
+const table = 'exportacao';
 
 module.exports = {
 
