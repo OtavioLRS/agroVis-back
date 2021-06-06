@@ -34,7 +34,7 @@ module.exports = {
 
     let { cities, years, months, products } = req.body.filter;
 
-    if (cities.length != 0 || years.length != 0 || months.length != 0 || products.length != 0) {
+    if (cities.length != 0 || products.length != 0) {
       queryString = queryString.concat(' WHERE ');
 
 
@@ -46,22 +46,6 @@ module.exports = {
         queryString = queryString.substring(0, queryString.length - 4).concat(') AND ');
       }
 
-      if (years.length != 0) {
-        queryString = queryString.concat('(');
-        years.forEach(e => {
-          queryString = queryString.concat('CO_ANO = ' + e + ' OR ');
-        });
-        queryString = queryString.substring(0, queryString.length - 4).concat(') AND ');
-      }
-
-      if (months.length != 0) {
-        queryString = queryString.concat('(');
-        months.forEach(e => {
-          queryString = queryString.concat('CO_MES = ' + e + ' OR ');
-        });
-        queryString = queryString.substring(0, queryString.length - 4).concat(') AND ');
-      }
-
       if (products.length != 0) {
         queryString = queryString.concat('(');
         products.forEach(e => {
@@ -69,6 +53,9 @@ module.exports = {
         });
         queryString = queryString.substring(0, queryString.length - 4).concat(') AND ');
       }
+
+
+
       queryString = queryString.substring(0, queryString.length - 5);
     }
     queryString = queryString.concat(';');
@@ -81,10 +68,6 @@ module.exports = {
       if (error !== null) console.log(error);
       console.log('\nDados recebidos, enviando...');
       res.send(results);
-      // console.log('\nDados brutos recebidos, realizando o tratamento...');
-      // const data = structureExportData(results);
-      // console.log('\nDados tratados, enviando...');
-      // res.json(data);
     });
   },
 
