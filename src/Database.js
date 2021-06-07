@@ -30,41 +30,44 @@ module.exports = {
   },
 
   getByFilter(req, res) {
-    let queryString = `SELECT * FROM ${table} `
+    let query = `SELECT * FROM ${table} WHERE `
 
-    let { cities, years, months, products } = req.body.filter;
+    let { cities, products, beginPeriod, endPeriod } = req.body.filter;
 
-    if (cities.length != 0 || products.length != 0) {
-      queryString = queryString.concat(' WHERE ');
+    // Periodo de tempo
+    const beginYear = parseInt(beginPeriod.split('-')[0]);
+    const beginMonth = parseInt(beginPeriod.split('-')[1]);
 
+    const endYear = parseInt(endPeriod.split('-')[0]);
+    const endMonth = parseInt(endPeriod.split('-')[1]);
 
-      if (cities.length != 0) {
-        queryString = queryString.concat('(');
-        cities.forEach(e => {
-          queryString = queryString.concat('CO_MUN = "' + e + '" OR ');
-        });
-        queryString = queryString.substring(0, queryString.length - 4).concat(') AND ');
-      }
+    query += `((CO_ANO > ${beginYear} AND CO_ANO < ${endYear}) OR ` // Anos 
+    query += `(CO_ANO = ${beginYear} AND CO_MES >= ${beginMonth}) OR `
+    query += `(CO_ANO = ${endYear} AND CO_MES <= ${endMonth})) AND `
 
-      if (products.length != 0) {
-        queryString = queryString.concat('(');
-        products.forEach(e => {
-          queryString = queryString.concat('SH4 = ' + e + ' OR ');
-        });
-        queryString = queryString.substring(0, queryString.length - 4).concat(') AND ');
-      }
-
-
-
-      queryString = queryString.substring(0, queryString.length - 5);
+    // Cidades
+    if (cities.length != 0) {
+      query += '(';
+      cities.forEach(e => {
+        query += `CO_MUN = ${e} OR `;
+      });
+      query = query.substring(0, query.length - 4) + ') AND ';
     }
-    queryString = queryString.concat(';');
 
+    // SH4s
+    if (products.length != 0) {
+      query = query.concat('(');
+      products.forEach(e => {
+        query += `SH4 = ${e} OR `;
+      });
+      query = query.substring(0, query.length - 4) + ') AND ';
+    }
+    query = query.substring(0, query.length - 5) + ';'
 
-    console.log('Requisição recebida! Executando query: \n  ' + queryString);
+    console.log('Requisição recebida! Executando query: \n  ' + query);
 
     // Enviando query ao banco
-    connection.query(queryString, (error, results, fields) => {
+    connection.query(query, (error, results, fields) => {
       if (error !== null) console.log(error);
       console.log('\nDados recebidos, enviando...');
       res.send(results);
