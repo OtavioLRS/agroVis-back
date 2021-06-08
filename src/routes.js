@@ -8,8 +8,8 @@ routes.get('/', (req, res) => {
   res.status(200);
 });
 
-routes.get('/municipios', Database.getCities);
-routes.get('/produtos', Database.getProducts);
+routes.get('/municipios', Database.getAllCities);
+routes.get('/produtos', Database.getAllProducts);
 routes.post('/exportacao', Database.getBySH4);
 
 module.exports = routes;
