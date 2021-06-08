@@ -29,8 +29,8 @@ module.exports = {
     });
   },
 
-  getByFilter(req, res) {
-    let query = `SELECT * FROM ${table} WHERE `
+  getBySH4(req, res) {
+    let query = `SELECT CO_ANO, CO_MES, SH4, NO_SH4_POR, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB FROM ${table} WHERE `
 
     let { cities, products, beginPeriod, endPeriod } = req.body.filter;
 
@@ -41,9 +41,8 @@ module.exports = {
     const endYear = parseInt(endPeriod.split('-')[0]);
     const endMonth = parseInt(endPeriod.split('-')[1]);
 
-    query += `((CO_ANO > ${beginYear} AND CO_ANO < ${endYear}) OR ` // Anos 
-    query += `(CO_ANO = ${beginYear} AND CO_MES >= ${beginMonth}) OR `
-    query += `(CO_ANO = ${endYear} AND CO_MES <= ${endMonth})) AND `
+    // Data
+    query += `(DATE(CO_DATA) BETWEEN '${beginYear}-${beginMonth}-1' AND '${endYear}-${endMonth}-1') AND `
 
     // Cidades
     if (cities.length != 0) {
@@ -62,7 +61,7 @@ module.exports = {
       });
       query = query.substring(0, query.length - 4) + ') AND ';
     }
-    query = query.substring(0, query.length - 5) + ';'
+    query = query.substring(0, query.length - 5) + ' GROUP BY SH4, CO_ANO, CO_MES;'
 
     console.log('Requisição recebida! Executando query: \n  ' + query);
 
