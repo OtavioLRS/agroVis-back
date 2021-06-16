@@ -10,6 +10,7 @@ routes.get('/', (req, res) => {
 
 routes.get('/municipios', Database.getAllCities);
 routes.get('/produtos', Database.getAllProducts);
-routes.post('/exportacao', Database.getBySH4);
+routes.post('/horizon_query', Database.getBySH4);
+routes.post('/map_query', Database.getByCity);
 
 module.exports = routes;

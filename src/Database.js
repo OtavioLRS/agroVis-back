@@ -49,4 +49,24 @@ module.exports = {
       res.send(results);
     });
   },
+
+  getByCity(req, res) {
+    // Inicio
+    let query = `SELECT CO_MUN, NO_MUN_MIN, SH4, NO_SH4_POR, COUNT(*) AS NUMBER_REGS, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB FROM ${table} `
+
+    // Data, Cidades, SH4s
+    query += buildWhereClause(req.body.filter);
+
+    // Agrupar valores de mesma data e SH4
+    query += ' GROUP BY CO_MUN, SH4 ORDER BY CO_MUN;'
+
+    console.log('Requisição recebida! Executando query: \n  ' + query);
+
+    // Enviando query ao banco
+    connection.query(query, (error, results) => {
+      if (error !== null) console.log(error);
+      console.log('\nDados recebidos, enviando...');
+      res.send(results);
+    });
+  },
 }
