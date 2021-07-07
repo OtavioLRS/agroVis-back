@@ -37,8 +37,11 @@ module.exports = {
     // Data, Cidades, SH4s
     query += buildWhereClause(req.body.filter);
 
+    // Ignorar valores com dado de valor 0 ('dato fantasma')
+    // query += 'AND VL_FOB != 0 ';
+
     // Agrupar valores de mesma data e SH4
-    query += ' GROUP BY SH4, CO_ANO, CO_MES;'
+    query += 'GROUP BY SH4, CO_ANO, CO_MES;'
 
     console.log('Requisição recebida! Executando query: \n  ' + query);
 
@@ -58,7 +61,7 @@ module.exports = {
     query += buildWhereClause(req.body.filter);
 
     // Agrupar valores de mesma data e SH4
-    query += ' GROUP BY CO_MUN, SH4 ORDER BY CO_MUN;'
+    query += 'GROUP BY CO_MUN, SH4 ORDER BY VL_FOB asc;'
 
     console.log('Requisição recebida! Executando query: \n  ' + query);
 

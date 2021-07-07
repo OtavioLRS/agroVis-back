@@ -18,7 +18,7 @@ module.exports = {
     if (cities.length != 0) {
       query += 'AND (';
       cities.forEach(e => {
-        query += `CO_MUN = ${e} OR `;
+        query += `(CO_MUN = ${e}) OR `;
       });
       query = query.substring(0, query.length - 4) + ') ';
     }
