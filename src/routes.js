@@ -4,13 +4,11 @@ const Database = require('./Database');
 
 const routes = express.Router();
 
-routes.get('/', (req, res) => {
-  res.status(200);
-});
-
 routes.get('/municipios', Database.getAllCities);
 routes.get('/produtos', Database.getAllProducts);
-routes.post('/horizon_query', Database.getBySH4);
-routes.post('/map_query', Database.getByCity);
+routes.post('/horizondata', Database.getHorizonData);
+routes.post('/mapdata', Database.getMapData);
+routes.post('/horizondata-aux', Database.getHorizonDataAux);
+routes.post('/sh4conversion', Database.getHorizonModal);
 
 module.exports = routes;

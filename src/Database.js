@@ -8,7 +8,7 @@ const connection = mysql.createPool({
   database: process.env.DB_NAME
 })
 
-const table = 'exportacao';
+const table = 'exportacao_miltown';
 
 module.exports = {
 
@@ -30,30 +30,7 @@ module.exports = {
     });
   },
 
-  getBySH4(req, res) {
-    // Inicio
-    let query = `SELECT CO_ANO, CO_MES, SH4, NO_SH4_POR, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB FROM ${table} `
-
-    // Data, Cidades, SH4s
-    query += buildWhereClause(req.body.filter);
-
-    // Ignorar valores com dado de valor 0 ('dato fantasma')
-    // query += 'AND VL_FOB != 0 ';
-
-    // Agrupar valores de mesma data e SH4
-    query += 'GROUP BY SH4, CO_ANO, CO_MES;'
-
-    console.log('Requisição recebida! Executando query: \n  ' + query);
-
-    // Enviando query ao banco
-    connection.query(query, (error, results) => {
-      if (error !== null) console.log(error);
-      console.log('\nDados recebidos, enviando...');
-      res.send(results);
-    });
-  },
-
-  getByCity(req, res) {
+  getMapData(req, res) {
     // Inicio
     let query = `SELECT CO_MUN, NO_MUN_MIN, SH4, NO_SH4_POR, COUNT(*) AS NUMBER_REGS, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB FROM ${table} `
 
@@ -61,9 +38,9 @@ module.exports = {
     query += buildWhereClause(req.body.filter);
 
     // Agrupar valores de mesma data e SH4
-    query += 'GROUP BY CO_MUN, SH4 ORDER BY VL_FOB asc;'
+    query += 'AND VL_FOB != 0 GROUP BY CO_MUN, SH4 ORDER BY VL_FOB asc;'
 
-    console.log('Requisição recebida! Executando query: \n  ' + query);
+    console.log('Requisição de dados Map recebida! Executando query: \n  ' + query);
 
     // Enviando query ao banco
     connection.query(query, (error, results) => {
@@ -72,4 +49,61 @@ module.exports = {
       res.send(results);
     });
   },
+
+  getHorizonData(req, res) {
+    // Inicio
+    let query = `SELECT CO_ANO, CO_MES, SH4, NO_SH4_POR, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB FROM ${table} `
+
+    // Data, Cidades, SH4s
+    query += buildWhereClause(req.body.filter);
+
+    // Agrupar valores de mesma data e SH4
+    query += 'GROUP BY SH4, CO_ANO, CO_MES;'
+
+    console.log('Requisição de dados Horizon recebida! Executando query: \n  ' + query);
+
+    // Enviando query ao banco
+    connection.query(query, (error, results) => {
+      if (error !== null) console.log(error);
+      console.log('\nDados recebidos, enviando...');
+      res.send(results);
+    });
+  },
+
+  getHorizonDataAux(req, res) {
+    // Inicio
+    let query = `SELECT CO_ANO, CO_MES, SH4, NO_SH4_POR, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB FROM ${table} `
+
+    // Cidade 'fantasma' com os dados auxiliares
+    req.body.filter.cities = ['0000000'];
+
+    // Data, Cidades, SH4s
+    query += buildWhereClause(req.body.filter);
+
+    // Agrupar valores de mesma data e SH4
+    query += 'GROUP BY SH4, CO_ANO, CO_MES;'
+
+    console.log('Requisição de dados auxiliares recebida! Executando query: \n  ' + query);
+
+    // Enviando query ao banco
+    connection.query(query, (error, results) => {
+      if (error !== null) console.log(error);
+      console.log('\nDados recebidos, enviando...');
+      res.send(results);
+    });
+  },
+
+  getHorizonModal(req, res) {
+    // Inicio
+    let query = `SELECT * FROM sh4_ncm WHERE CO_SH4 = ${req.body.sh4};`
+
+    console.log('Requisição de conversão de SH4 recebida! Executando query: \n  ' + query);
+
+    // Enviando query ao banco
+    connection.query(query, (error, results) => {
+      if (error !== null) console.log(error);
+      console.log('\nDados recebidos, enviando...');
+      res.send(results);
+    });
+  }
 }

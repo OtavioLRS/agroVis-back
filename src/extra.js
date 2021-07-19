@@ -22,6 +22,8 @@ module.exports = {
       });
       query = query.substring(0, query.length - 4) + ') ';
     }
+    // Todas cidades no filtro, com exceção da fantasma
+    else query += 'AND (CO_MUN != 0000000) ';
 
     // SH4s
     if (products.length != 0) {
