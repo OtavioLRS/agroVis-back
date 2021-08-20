@@ -9,11 +9,12 @@ const connection = mysql.createPool({
 })
 
 const table = 'exportacao_miltown';
+// const table = 'exportacao_final';
 
 module.exports = {
 
   getAllCities(req, res) {
-    connection.query('SELECT * FROM cidade;', (error, results) => {
+    connection.query('SELECT * FROM cidade ORDER BY NO_MUN_MIN asc;', (error, results) => {
       if (error !== null) console.log(error);
       // console.log(results);
       console.log('Nomes dos municípios requisitados, enviando...');
@@ -93,7 +94,7 @@ module.exports = {
     });
   },
 
-  getHorizonModal(req, res) {
+  getSH4Conversion(req, res) {
     // Inicio
     let query = `SELECT * FROM sh4_ncm WHERE CO_SH4 = ${req.body.sh4};`
 
@@ -103,6 +104,93 @@ module.exports = {
     connection.query(query, (error, results) => {
       if (error !== null) console.log(error);
       console.log('\nDados recebidos, enviando...');
+      res.send(results);
+    });
+  },
+
+  getModalData(req, res) {
+    // Inicio
+    let query = `SELECT CO_MUN, NO_MUN_MIN, SH4, NO_SH4_POR, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB FROM ${table} `
+
+    query += buildWhereClause(req.body.filter);
+
+    query += 'AND VL_FOB != 0 GROUP BY CO_MUN ORDER BY VL_FOB desc;'
+
+    console.log('Requisição de dados do Modal recebida! Executando query: \n  ' + query);
+
+    // Enviando query ao banco
+    connection.query(query, (error, results) => {
+      if (error !== null) console.log(error);
+      console.log('\nDados recebidos, enviando...');
+      res.send(results);
+    });
+  },
+
+  getNumRegs(req, res) {
+    // Inicio
+    let query = `SELECT CO_ANO, CO_MES, COUNT(*) AS NUM_REG FROM ${table} `
+
+    query += buildWhereClause(req.body);
+
+    query += 'GROUP BY CO_MES;'
+
+    // console.log('Requisição de numero de registros recebida! Executando query: \n  ' + query);
+
+    // Enviando query ao banco
+    connection.query(query, (error, results) => {
+      if (error !== null) console.log(error);
+      // console.log('\nDados recebidos, enviando...');
+      res.send(results);
+    });
+  },
+
+  getNotes(req, res) {
+    let query = `SELECT * FROM notas WHERE SH4 = ${req.body.filter.sh4} `
+
+    query += `AND (DATA_INI <= '${req.body.filter.date2}' AND DATA_FIM >= '${req.body.filter.date1}') `
+
+    console.log('Requisição de Anotações recebida! Executando query: \n  ' + query);
+    // query += ``
+
+    // Enviando query ao banco
+    connection.query(query, (error, results) => {
+      if (error !== null) console.log(error);
+      console.log('\nDados recebidos, enviando...');
+      res.send(results);
+    });
+  },
+
+  addNote(req, res) {
+    const { filter, map, note, now } = req.body;
+    console.log({ filter, map, note, now })
+
+    let query = `INSERT INTO anotacao (` +
+      `PRODUCTS,` +
+      `CITIES,` +
+      `BEGIN_PERIOD,` +
+      `END_PERIOD,` +
+      `SORT_VALUE,` +
+      `MAP_SH4,` +
+      `NUM_CLASS,` +
+      `TITLE,` +
+      `TEXTO,` +
+      `REGISTER_DATE) VALUES ` +
+      `('${filter.products}',` +
+      `'${filter.cities}',` +
+      `'${filter.beginPeriod}',` +
+      `'${filter.endPeriod}',` +
+      `'${filter.sortValue}',` +
+      `${map.sh4},` +
+      `${map.numClasses},` +
+      `'${note.title}',` +
+      `'${note.text}',` +
+      `TIMESTAMP('${now}'));`
+
+    console.log("Inserindo nota: " + query);
+
+    connection.query(query, (error, results) => {
+      if (error !== null) console.log(error);
+      console.log('\nAnotação salva!');
       res.send(results);
     });
   }
