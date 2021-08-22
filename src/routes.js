@@ -17,6 +17,7 @@ routes.post('/sh4conversion', Database.getSH4Conversion);
 routes.post('/notes', Database.getNotes);
 
 routes.post('/addnote', Database.addNote);
+routes.post('/getnotes', Database.getNotes);
 
 routes.post('/num-regs', Database.getNumRegs);
 

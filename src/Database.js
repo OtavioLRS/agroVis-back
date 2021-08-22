@@ -145,12 +145,7 @@ module.exports = {
   },
 
   getNotes(req, res) {
-    let query = `SELECT * FROM notas WHERE SH4 = ${req.body.filter.sh4} `
-
-    query += `AND (DATA_INI <= '${req.body.filter.date2}' AND DATA_FIM >= '${req.body.filter.date1}') `
-
-    console.log('Requisição de Anotações recebida! Executando query: \n  ' + query);
-    // query += ``
+    let query = `SELECT * FROM anotacao;`
 
     // Enviando query ao banco
     connection.query(query, (error, results) => {
