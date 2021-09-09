@@ -14,5 +14,10 @@ const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
   console.log(`Servidor inicializado na porta ${PORT}`);
-  console.log(process.env)
+  console.log({
+    host: process.env.DB_HOST,
+    user: process.env.DB_NAME,
+    password: process.env.DB_USER,
+    database: process.env.DB_PASS
+  })
 });
