@@ -8,8 +8,7 @@ const connection = mysql.createPool({
   database: process.env.DB_NAME
 })
 
-const table = 'exportacao_miltown';
-// const table = 'exportacao_final';
+const table = 'exportacao';
 
 module.exports = {
 
