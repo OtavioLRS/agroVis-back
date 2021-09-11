@@ -72,7 +72,7 @@ module.exports = {
 
   getHorizonDataAux(req, res) {
     // Inicio
-    let query = `SELECT CO_ANO, CO_MES, SH4, NO_SH4_POR, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB FROM ${table} `
+    let query = `SELECT CO_ANO, CO_MES, SH4, NO_SH4_POR, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB, COUNT(*) AS NUM_REGS FROM ${table} `
 
     // Cidade 'fantasma' com os dados auxiliares
     req.body.filter.cities = ['0000000'];
