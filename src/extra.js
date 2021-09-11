@@ -12,7 +12,8 @@ module.exports = {
     const endMonth = parseInt(endPeriod.split('-')[1]);
 
     // Data
-    let query = `WHERE (DATE(CO_DATA) BETWEEN '${beginYear}-${beginMonth}-1' AND '${endYear}-${endMonth}-1') `
+    let query = `WHERE (DATE(CO_DATA) BETWEEN '${beginYear}-${beginMonth}-1' AND '${endYear}-${endMonth}-30') `
+    console.log(`entre ${beginYear}-${beginMonth}-1`)
 
     // Cidades
     if (cities.length != 0) {
