@@ -52,7 +52,7 @@ module.exports = {
 
   getHorizonData(req, res) {
     // Inicio
-    let query = `SELECT CO_ANO, CO_MES, SH4, NO_SH4_POR, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB FROM ${table} `
+    let query = `SELECT CO_ANO, CO_MES, SH4, NO_SH4_POR, SUM(KG_LIQUIDO) AS KG_LIQUIDO, SUM(VL_FOB) AS VL_FOB, COUNT(*) AS NUM_REGS FROM ${table} `
 
     // Data, Cidades, SH4s
     query += buildWhereClause(req.body.filter);
