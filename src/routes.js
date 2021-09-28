@@ -1,8 +1,11 @@
 const express = require('express');
 
-const Database = require('./Database');
+const Database = require('./controllers/DatabaseController');
+const LoginController = require('./controllers/LoginController');
 
 const routes = express.Router();
+
+
 
 routes.get('/municipios', Database.getAllCities);
 routes.get('/produtos', Database.getAllProducts);
@@ -20,6 +23,17 @@ routes.post('/addnote', Database.addNote);
 routes.post('/getnotes', Database.getNotes);
 
 routes.post('/num-regs', Database.getNumRegs);
+
+
+
+
+
+routes.post('/login', LoginController.login);
+routes.post('/signup', LoginController.signup);
+
+
+
+
 
 
 module.exports = routes;
