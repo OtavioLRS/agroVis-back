@@ -3,6 +3,8 @@ const express = require('express');
 const Database = require('./controllers/DatabaseController');
 const LoginController = require('./controllers/LoginController');
 
+const authMiddleware = require('./middleware/auth')
+
 const routes = express.Router();
 
 
@@ -30,6 +32,7 @@ routes.post('/num-regs', Database.getNumRegs);
 
 routes.post('/login', LoginController.login);
 routes.post('/signup', LoginController.signup);
+routes.get('/teste', authMiddleware, LoginController.signup);
 
 
 

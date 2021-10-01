@@ -7,42 +7,61 @@ const generateToken = (params = {}) => jwt.sign(params, authConfig.secret, {
   expiresIn: 86400, //um dia
 });
 
+const validPassword = (plain, hashed) => bcrypt.compareSync(plain, hashed);
+
 module.exports = {
-  login(req, res) {
+  async login(req, res) {
     const { email, password } = req.body;
 
     if (!email || !password || email == null || password == null || email == undefined || password == undefined)
-      return res.status(400).json({ msg: 'EMAIL OR PASSWORD IS INVALID' });
+      return res.status(400).json({ msg: 'Email ou senha inválido!' });
 
+    connection.query(`SELECT * FROM usuario WHERE email = '${email}';`, (error, results) => {
+      if (error !== null)
+        return res.status(400).json({ msg: error });
 
+      if (results.length == 0)
+        return res.status(400).json({ msg: 'Usuário não encontrado!' });
 
+      const user = results[0];
 
-    connection.query(`SELECT * FROM usuario WHERE email = ${email};`, (error, results) => {
-      // if (results.length)
-      console.log(results)
+      console.log(validPassword(password, user.password))
 
-      // bcrypt.hash(password, 10, function (err, hash) {
-      //   if (error !== null) console.log(error);
-      //   // console.log(results);
-      //   // res.send(results);
-      // });
+      if (validPassword(password, user.password) == false)
+        return res.status(400).json({ msg: 'Senha incorreta!' });
+
+      user.password = undefined;
+      return res.send({ user, token: generateToken({ id: user.index }) })
     });
-
   },
 
-  signup(req, res) {
+  async signup(req, res) {
     const { name, email, password } = req.body;
 
     if (!email || !password || email == null || password == null || email == undefined || password == undefined)
-      return res.status(400).json({ msg: 'EMAIL OR PASSWORD IS INVALID' });
+      return res.status(400).json({ msg: 'Email or password invalid' });
 
-    bcrypt.hash(password, 10, function (err, hash) {
-      let sql = 'INSERT INTO usuario (nome, email, senha) VALUES ?';
-      let values = [[name, email, hash]];
-      connection.query(sql, [values], function (err, results) {
-        if (!err) return res.status(200);
-        else return res.status(400).json({ msg: 'Email já cadastrado!' });
-      })
+    connection.query(`SELECT * FROM usuario WHERE email = '${email}';`, (error, results) => {
+      if (results.length != 0)
+        return res.status(400).json({ msg: 'Email já cadastrado' })
+
+      bcrypt.hash(password, 10, function (err, hash) {
+        if (err) return res.status(400).json({ msg: 'Erro no cadastro' });
+
+        let sql = 'INSERT INTO usuario (name, email, password) VALUES ?';
+        let values = [[name, email, hash]];
+
+        connection.query(sql, [values], function (errSql, results) {
+          if (errSql) return res.status(400).json({ msg: 'Erro no cadastro' });
+
+          results.password = undefined;
+          res.send({
+            message: 'Table Data',
+            result: results,
+            token: generateToken({ id: results.index })
+          });
+        })
+      });
     });
   }
 }
