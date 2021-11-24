@@ -21,7 +21,7 @@ module.exports = {
         return res.status(400).json({ msg: error });
 
       if (results.length == 0)
-        return res.status(400).json({ msg: 'Usuário não encontrado!' });
+        return res.status(400).json({ msg: 'Usuário não cadastrado!' });
 
       const user = results[0];
 
