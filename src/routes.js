@@ -23,7 +23,6 @@ routes.post('/modaldata', Database.getModalData);
 
 
 
-// routes.post('/num-regs', Database.getNumRegs);
 
 
 
